@@ -1,0 +1,20 @@
+{
+  "name": "morse",
+  "version": "0.0.1",
+  "description": "Morse code communicator app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dominik Widomski",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4",
+    "mongoose": "^4.4.19",
+    "morgan": "^1.7.0",
+    "socket.io": "^1.4.6"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
