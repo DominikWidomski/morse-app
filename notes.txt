@@ -1,3 +1,10 @@
+Relevant links
+
+http://socket.io/get-started/chat/
+https://css-tricks.com/whats-great-bower/
+https://webrtc.org/
+
+
 Run MongoDB deamon
 
 	mongod
