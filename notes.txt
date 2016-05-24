@@ -1,0 +1,10 @@
+Run MongoDB deamon
+
+	mongod
+
+
+
+Run server:
+
+	node server.js
+
