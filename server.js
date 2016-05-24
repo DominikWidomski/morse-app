@@ -111,6 +111,8 @@ io.on('connection', function(socket) {
 
   //Listens for new user
   socket.on('new user', function(data) {
+    console.log(data);
+
     data.room = defaultRoom;
     //New user joins the default room
     socket.join(defaultRoom);
@@ -150,4 +152,4 @@ io.on('connection', function(socket) {
 
 /* Start Server on port 2015 */
 server.listen(2015);
-console.log('It\'s going down in 2015');
+console.log('Listening on 2015');
