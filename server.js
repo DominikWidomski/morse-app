@@ -109,6 +109,20 @@ io.on('connection', function(socket) {
     rooms: rooms
   });
 
+  socket.on('emitterStart', function(data) {
+    console.log(">>> Start Emitting");
+
+    io.emit('signalStart');
+    console.log("<<< START [GLOBAL]");
+  });
+
+  socket.on('emitterStop', function(data) {
+    console.log(">>> Stop Emitting");
+
+    io.emit('signalStop');
+    console.log("<<< STOP [GLOBAL]");
+  });
+
   //Listens for new user
   socket.on('new user', function(data) {
     console.log(data);
