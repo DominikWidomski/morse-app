@@ -29,17 +29,13 @@ const NOTES = {
 function AudioController( context )
 {
 	this.context = context;
-	// this.element = element;
 
-	// this.tracking = false;
 	this.play = false;
 	this.started = false;
 
 	this.oscillator = this.context.createOscillator();
 	this.tuner = this.oscillator.detune;
-	this.oscillator.type = 'square';
-
-	//this.element.addEventListener('click', this.ping.bind(this));
+	this.oscillator.type = 'sine';
 }
 
 AudioController.prototype.ping = function(note = "A4") {
