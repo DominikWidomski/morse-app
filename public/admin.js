@@ -7,7 +7,7 @@ socket.emit('registerAdminView', {
 	username: 'Dom Admin'
 });
 
-socket.on('usersInfo', (data) => {
+socket.on('usersInfo', data => {
 	console.log("USERS", data);
 });
 

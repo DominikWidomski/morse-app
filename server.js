@@ -1,16 +1,24 @@
 'use strict';
 
 // Import all our dependencies
-var express  = require('express');
-var mongoose = require('mongoose');
-var app      = express();
-var server   = require('http').Server(app);
-var io       = require('socket.io')(server);
+const express  = require('express');
+const mongoose = require('mongoose');
+const app      = express();
+const server   = require('http').Server(app);
+const io       = require('socket.io')(server);
+
+/* https://github.com/broofa/node-uuid */
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+  });
+}
 
 // tell express where to serve static files from
 app.use(express.static(__dirname + '/public'));
 
-// allow CORS
+// allow CORS, middleware
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -29,7 +37,7 @@ app.get('/', function(req, res) {
   res.sendfile('index.html');
 });
 
-// route for our index file
+// route for admin page
 app.get('/admin', function(req, res) {
   //send the index.html in our public directory
   res.sendfile('public/admin.html');
@@ -42,8 +50,8 @@ app.get('/admin', function(req, res) {
 const MORSE_GROUP = 'morse';
 const ADMIN_GROUP = 'admin';
 
-let users = [];
-let adminUsers = [];
+let users = {};
+let adminUsers = {};
 /*||||||||||||||| END GLOBAL VARS |||||||||||||*/
 
 
@@ -51,14 +59,15 @@ let adminUsers = [];
 
 /* DEFAULT NAMESPACE */
 io.on('connection', function(socket) {
-  var thisUser = null;
+  let thisUser = null;
+  let thisUserUuid = null;
 
   //Emit the rooms array
   socket.emit('setup', {
-    // rooms: rooms
+    users: users
   });
 
-  socket.on('disconnect', function(){
+  socket.on('disconnect', function() {
     console.log('LEFT', thisUser ? thisUser.username : "NOT SPECIFIED");
   });
 
@@ -67,7 +76,10 @@ io.on('connection', function(socket) {
     //New user joins the default room
     socket.join(MORSE_GROUP);
 
-    users.push(user);
+    while(!users[(thisUserUuid = uuid())]) {
+      users[thisUserUuid] = user;
+      break;
+    }
 
     thisUser = user;
 
@@ -82,7 +94,8 @@ io.on('connection', function(socket) {
   socket.on('emitterStart', function(data) {
     console.log(">>> Start Emitting");
 
-    io.emit('signalSta§t');
+    io.emit('signalStart');
+    socket.broadcast.emit('signalStartBroadcast');
     console.log("<<< START [GLOBAL]");
   });
 
@@ -90,23 +103,25 @@ io.on('connection', function(socket) {
     console.log(">>> Stop Emitting");
 
     io.emit('signalStop');
+    socket.broadcast.emit('signalStopBroadcast');
     console.log("<<< STOP [GLOBAL]");
   });
 });
 
 
 /* ADMIN NAMESPACE */
-var adminIO = io.of('/admin');
+let adminIO = io.of('/admin');
 
 adminIO.on('connection', function(socket) {
-  var thisUser = null;
+  let thisUser = null;
 
   //Emit the rooms array
   socket.emit('setup', {
     // rooms: rooms
   });
 
-  socket.on('disconnect', function(){
+  socket.on('disconnect', function() {
+    delete adminUsers[socket.id];
     console.log('LEFT', thisUser ? thisUser.username : "NOT SPECIFIED");
   });
 
@@ -115,7 +130,7 @@ adminIO.on('connection', function(socket) {
     //New user joins the default room
     socket.join(ADMIN_GROUP);
 
-    adminUsers.push(user);
+    adminUsers[socket.id] = user;
 
     //Tell all those in the room that a new user joined
     io.in(ADMIN_GROUP).emit('newAdminView', user);
@@ -132,6 +147,6 @@ adminIO.on('connection', function(socket) {
 
 console.log(this);
 
-/* Start Server on port 2015 */
-server.listen(2015);
-console.log('Listening on 2015');
+/* Start Server on port 1337 */
+server.listen(1337);
+console.log('Listening on 1337');
