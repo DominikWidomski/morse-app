@@ -1,6 +1,9 @@
 {
   "name": "IRL",
+  "short_name": "IRL",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "background_color": "#416397",
+  "theme_color": "#0A3C78"
 }

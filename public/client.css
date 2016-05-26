@@ -14,6 +14,37 @@ button
 	left: 0;
 	bottom: 0;
 	right: 0;
-	background: #ddd;
+	background: #0A3C78;
 	padding: 20px;
+}
+
+body
+{
+	background: #416397;
+	color: #3C3744;
+}
+
+button:focus {
+	outline: none !important;
+}
+
+.fab
+{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 150px;
+	height: 150px;
+	margin: -75px 0 0 -75px;
+	border-radius: 50%;
+	border: none;
+	background: #119DA4;
+	border: 2px solid #0C7489;
+
+	transition: transform 200ms ease-in-out,
+					box-shadow 200ms ease-in-out;
+}
+.fab:active {
+	transform: scale(1.1);
+	box-shadow: 0 0 50px rgba(2, 2, 2, 0.5);
 }
