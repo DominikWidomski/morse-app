@@ -38,16 +38,13 @@ function AudioController( context )
 	this.oscillator.type = 'sine';
 }
 
-AudioController.prototype.ping = function(note = "A4") {
+AudioController.prototype.start = function(note = "A4") {
 	if( !this.play )
 	{
-		console.log('connect');
 		this.oscillator.frequency.value = NOTES[note];
-		console.log(this.oscillator.frequency.value);
 		this.oscillator.connect(this.context.destination);
 
 		if( !this.started ) {
-			console.log('start');
 			this.started = true;
 			this.oscillator.start();
 			this.play = true;
@@ -56,11 +53,22 @@ AudioController.prototype.ping = function(note = "A4") {
 		if(this.bangTimeout) {
 			window.clearTimeout(this.bangTimeout);
 		}
+	}
+}
+
+AudioController.prototype.stop = function() {
+	this.oscillator.disconnect(this.context.destination);
+	this.play = false;
+}
+
+AudioController.prototype.ping = function(note = "A4") {
+	if( !this.play )
+	{
+		this.start();
 
 		this.bangTimeout = window.setTimeout(() => {
-			console.log('disconnect');
-			this.oscillator.disconnect(this.context.destination);
-			this.play = false;
+			// console.log('disconnect');
+			this.stop();
 		}, 1000);
 	}
 }

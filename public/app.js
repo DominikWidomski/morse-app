@@ -71,6 +71,7 @@ socket.on('signalStop', function(e) {
 });
 
 socket.on('signalStartBroadcast', function(e) {
+	/*
 	var handleIncoming = function() {
 		console.info("%cINCOMING Broadcast", broadcastStyle);
 		if(volume) {
@@ -80,11 +81,14 @@ socket.on('signalStartBroadcast', function(e) {
 
 	intervalIdBroadcast = setInterval(handleIncoming, 1000);
 	handleIncoming();
+	*/
+	audioController.start(selectedNote);
 });
 
 socket.on('signalStopBroadcast', function(e) {
 	console.info("%cINCOMING Broadcast Stopped!!!", broadcastStyle);
 	clearTimeout(intervalIdBroadcast);
+	audioController.stop();
 });
 
 // NOTES SELECTOR
