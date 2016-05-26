@@ -88,7 +88,7 @@ io.on('connection', function(socket) {
 
     adminIo.in(ADMIN_GROUP).emit('newUserView', user);
 
-    console.log('JOINED', user.username);
+    console.log('JOINED', user);
   });
 
   socket.on('emitterStart', function(data) {

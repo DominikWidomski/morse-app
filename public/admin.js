@@ -11,12 +11,11 @@ socket.on('usersInfo', data => {
 	console.log("USERS", data);
 });
 
-socket.on('newUserView', data => {
-	console.log("NEW USER VIEW", data);
-});
 
 angular.module('adminApp', [])
 	.controller('UsersController', function($scope) {
+		window.$scope = $scope;
+
 		$scope.users = [
 			{
 				username: 'dom',
@@ -26,7 +25,6 @@ angular.module('adminApp', [])
 			}
 		];
 
-
 		$scope.addNewUser = function() {
 			$scope.users.push({
 				username: $scope.newUserName
@@ -34,4 +32,20 @@ angular.module('adminApp', [])
 
 			$scope.newUserName = "";
 		}
+
+		socket.on('usersInfo', data => {
+			console.log("USERS", data);
+			for(userId in data.users) {
+				$scope.users.push({
+					username: data.users[userId].username
+				});
+			}
+			$scope.$apply();
+		});
+
+		socket.on('newUserView', data => {
+			console.log("NEW USER VIEW", data);
+			$scope.users.push(data);
+			$scope.$apply();
+		});
 	});
