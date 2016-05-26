@@ -144,9 +144,8 @@ adminIo.on('connection', function(socket) {
 });
 /*||||||||||||||||||||END SOCKETS||||||||||||||||||*/
 
-
-console.log(this);
+console.log(process.argv);
 
 /* Start Server on port 1337 */
-server.listen(1337);
+server.listen(1337, "0.0.0.0");
 console.log('Listening on 1337');
