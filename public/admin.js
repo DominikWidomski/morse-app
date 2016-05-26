@@ -16,14 +16,7 @@ angular.module('adminApp', [])
 	.controller('UsersController', function($scope) {
 		window.$scope = $scope;
 
-		$scope.users = [
-			{
-				username: 'dom',
-			},
-			{
-				username: 'kacper',
-			}
-		];
+		$scope.users = [];
 
 		$scope.addNewUser = function() {
 			$scope.users.push({
