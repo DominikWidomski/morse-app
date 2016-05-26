@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io('/admin');
 socket.on('setup', function() {
 	console.log(arguments);
 });

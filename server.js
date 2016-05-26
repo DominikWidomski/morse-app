@@ -38,54 +38,45 @@ app.get('/admin', function(req, res) {
 /*||||||||||||||||||END ROUTES|||||||||||||||||||||*/
 
 
-/*|||||||||||||| GLOBAL USER STORES |||||||||||||||*/
+/*|||||||||||||||| GLOBAL VARS ||||||||||||||||*/
+const MORSE_GROUP = 'morse';
+const ADMIN_GROUP = 'admin';
+
 let users = [];
 let adminUsers = [];
-/*|||||||||||| END GLOBAL USER STORES |||||||||||||*/
+/*||||||||||||||| END GLOBAL VARS |||||||||||||*/
 
 
 /*||||||||||||||||SOCKET|||||||||||||||||||||||*/
-//Listen for connection
+
+/* DEFAULT NAMESPACE */
 io.on('connection', function(socket) {
-  //Globals
-  const MORSE_GROUP = 'morse';
-  const ADMIN_GROUP = 'admin';
+  var thisUser = null;
 
   //Emit the rooms array
   socket.emit('setup', {
     // rooms: rooms
   });
 
+  socket.on('disconnect', function(){
+    console.log('LEFT', thisUser ? thisUser.username : "NOT SPECIFIED");
+  });
+
   // Registe User View, for sending signals
-  socket.on('registerUserView', function(data) {
+  socket.on('registerUserView', function(user) {
     //New user joins the default room
     socket.join(MORSE_GROUP);
 
-    users.push(data);
+    users.push(user);
 
-    console.log('USER JOINED', users.length);
-
-    //Tell all those in the room that a new user joined
-    io.in(MORSE_GROUP).emit('newUserView', data);
-
-    io.in(ADMIN_GROUP).emit('newUserView', data);
-  });
-
-  // Register an admin view, for viewing stats
-  socket.on('registerAdminView', function(data) {
-    //New user joins the default room
-    socket.join(ADMIN_GROUP);
-
-    adminUsers.push(data);
+    thisUser = user;
 
     //Tell all those in the room that a new user joined
-    io.in(ADMIN_GROUP).emit('newAdminView', data);
+    io.in(MORSE_GROUP).emit('newUserView', user);
 
-    // Tell admin view who is using the application
-    socket.emit('usersInfo', {
-      adminUsers: adminUsers,
-      users: users
-    });
+    io.in(ADMIN_GROUP).emit('newUserView', user);
+
+    console.log('JOINED', user.username);
   });
 
   socket.on('emitterStart', function(data) {
@@ -100,6 +91,40 @@ io.on('connection', function(socket) {
 
     io.emit('signalStop');
     console.log("<<< STOP [GLOBAL]");
+  });
+});
+
+
+/* ADMIN NAMESPACE */
+var adminIO = io.of('/admin');
+
+adminIO.on('connection', function(socket) {
+  var thisUser = null;
+
+  //Emit the rooms array
+  socket.emit('setup', {
+    // rooms: rooms
+  });
+
+  socket.on('disconnect', function(){
+    console.log('LEFT', thisUser ? thisUser.username : "NOT SPECIFIED");
+  });
+
+  // Register an admin view, for viewing stats
+  socket.on('registerAdminView', function(user) {
+    //New user joins the default room
+    socket.join(ADMIN_GROUP);
+
+    adminUsers.push(user);
+
+    //Tell all those in the room that a new user joined
+    io.in(ADMIN_GROUP).emit('newAdminView', user);
+
+    // Tell admin view who is using the application
+    socket.emit('usersInfo', {
+      adminUsers: adminUsers,
+      users: users
+    });
   });
 });
 /*||||||||||||||||||||END SOCKETS||||||||||||||||||*/
