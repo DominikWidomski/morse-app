@@ -1,0 +1,6 @@
+{
+  "name": "IRL",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}
