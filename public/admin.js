@@ -55,7 +55,7 @@ angular.module('adminApp', [])
 		$scope.users = [];
 
 		socket.on('usersInfo', data => {
-			for(userId in data.users) {
+			for(userId in data.adminUsers) {
 				$scope.users.push({
 					username: data.adminUsers[userId].username
 				});
