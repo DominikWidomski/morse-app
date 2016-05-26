@@ -4,23 +4,37 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>RTC</title>
-		<style>
-			button
-			{
-				-webkit-appearance: none;
-				padding: 10px;
-				border: 1px solid #222;
-				border-radius: 3px;
-				background: #666;
-				color: #eee;
-			}
-		</style>
+		<link rel="stylesheet" href=/bower_components/bootstrap/dist/css/bootstrap.css></link>
+		<link rel="stylesheet" href="client.css">
 	</head>
 	<body>
-		<h1>4REAL</h1>
+		<div class="container">
+			<h1>4REAL</h1>
 
-		<button type="button" class="js-ping">Ping</button>
+			<button type="button" class="js-ping">Ping</button>
 
+		</div>
+
+		<div class="settings" ng-app="userModule">
+			<button type="button" class="btn btn-link">
+				<span class="glyphicon glyphicon-wrench"></span>
+			</button>
+
+			<div class="settings__body" ng-controller="notesController">
+				<button 	type="button"
+							class="js-select-note btn btn-link"
+							value="{{note}}"
+							ng-repeat="(note, freq) in notes"
+							ng-click="selectNote(note)"
+							ng-class="{true:'btn-primary', false: 'btn-link'}[note==selectedNote]">
+							{{note}}
+				</button>
+			</div>
+		</div>
+
+		<script src=/bower_components/jquery/dist/jquery.min.js></script>
+		<script src=/bower_components/bootstrap/dist/js/bootstrap.min.js></script>
+		<script src=/bower_components/angular/angular.js></script>
 		<script src=/components/audio.js></script>
 		<script src=/socket.io/socket.io.js></script>
 		<script src="app.js"></script>

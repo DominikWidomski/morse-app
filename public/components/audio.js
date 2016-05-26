@@ -37,6 +37,7 @@ function AudioController( context )
 
 	this.oscillator = this.context.createOscillator();
 	this.tuner = this.oscillator.detune;
+	this.oscillator.type = 'square';
 
 	//this.element.addEventListener('click', this.ping.bind(this));
 }

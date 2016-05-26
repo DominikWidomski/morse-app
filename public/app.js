@@ -73,7 +73,7 @@ socket.on('signalStop', function(e) {
 socket.on('signalStartBroadcast', function(e) {
 	var handleIncoming = function() {
 		console.info("%cINCOMING Broadcast", broadcastStyle);
-		audioController.ping("C4");
+		audioController.ping(selectedNote);
 	};
 
 	intervalIdBroadcast = setInterval(handleIncoming, 1000);
@@ -84,3 +84,36 @@ socket.on('signalStopBroadcast', function(e) {
 	console.info("%cINCOMING Broadcast Stopped!!!", broadcastStyle);
 	clearTimeout(intervalIdBroadcast);
 });
+
+// NOTES SELECTOR
+let selectedNote = "C4";
+
+angular.module('userModule', [])
+	.controller('notesController', function($scope) {
+		$scope.selectedNote = selectedNote;
+
+		$scope.notes = {
+			"C4" : 261.63,
+		 	"C#4": 277.18,
+		 	"Db4": 277.18,
+			"D4": 293.66,
+		 	"D#4": 311.13,
+		 	"Eb4": 311.13,
+			"E4": 329.63,
+			"F4": 349.23,
+		 	"F#4": 369.99,
+		 	"Gb4": 369.99,
+			"G4": 392.00,
+			"G#4": 415.30,
+			"Ab4": 415.30,
+			"A4": 440.00,
+			"A#4": 466.16,
+			"Bb4": 466.16,
+			"B4": 493.88,
+			"C5": 523.25
+		};
+
+		$scope.selectNote = function(note) {
+			$scope.selectedNote = selectedNote = note;
+		}
+	});
