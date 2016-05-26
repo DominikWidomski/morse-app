@@ -48,4 +48,23 @@ angular.module('adminApp', [])
 			$scope.users.push(data);
 			$scope.$apply();
 		});
+	})
+	.controller('AdminController', function($scope) {
+		window.$scope = $scope;
+
+		$scope.users = [];
+
+		socket.on('usersInfo', data => {
+			for(userId in data.users) {
+				$scope.users.push({
+					username: data.adminUsers[userId].username
+				});
+			}
+			$scope.$apply();
+		});
+
+		socket.on('newAdminView', data => {
+			$scope.users.push(data);
+			$scope.$apply();
+		});
 	});
