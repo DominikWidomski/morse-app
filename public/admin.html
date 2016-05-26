@@ -8,8 +8,9 @@
 		<style src=/bower_components/bootstrap/dist/css/bootstrap.css></style>
 	</head>
 	<body>
-		<h1>Morse Admin</h1>
+		<h1>Admin</h1>
 
+		<!--
 		<form action="/setup" method="post" accept-charset="utf-8">
 			<fieldset disabled>
 				<p>MongoDB disabled</p>
@@ -18,13 +19,26 @@
 				<button type="submit">Setup</button>
 			</fieldset>
 		</form>
+		-->
 
+		<div ng-app="adminApp">
+			<h2>Users:</h2>
+
+			<div ng-controller="UsersController">
+				<ul>
+					<li ng-repeat="user in users">{{user.username}}</li>
+				</ul>
+
+				<input type="text" ng-model="newUserName">
+				<button type="button" ng-click="addNewUser()">Add User</button>
+			</div>
+		</div>
 
 
 
 		<script src=/bower_components/jquery/dist/jquery.min.js></script>
-		<script src=/bower_components/angular/angular.js></script>
 		<script src=/bower_components/bootstrap/dist/js/bootstrap.min.js></script>
+		<script src=/bower_components/angular/angular.js></script>
 		<script src=/socket.io/socket.io.js></script>
 		<script src="admin.js"></script>
 	</body>
