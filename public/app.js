@@ -3,12 +3,8 @@ socket.on('setup', function() {
 	console.log(arguments);
 });
 
-socket.emit('new user', {
-	username: 'Dom'
-});
-
-socket.on('user joined', function() {
-	console.log(arguments);
+socket.emit('registerUserView', {
+	username: 'Dom Client'
 });
 
 let intervalId;

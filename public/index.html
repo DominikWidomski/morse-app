@@ -4,18 +4,20 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Morse Communicator</title>
-		<link rel="stylesheet" href="">
+		<style>
+			button
+			{
+				-webkit-appearance: none;
+				padding: 10px;
+				border: 1px solid #222;
+				border-radius: 3px;
+				background: #666;
+				color: #eee;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>Morse</h1>
-
-		<a href="/msg" title="">Messages</a>
-
-		<form action="/setup" method="post" accept-charset="utf-8">
-			<p>Setup the DB</p>
-
-			<button type="submit">Setup</button>
-		</form>
 
 		<button type="button" class="js-ping">Ping</button>
 
