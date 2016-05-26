@@ -13,12 +13,14 @@ function getAudioContext() {
 	}
 }
 
+let audioController;
+
 function init() {
 	audioContext = getAudioContext();
 
 	let btn = document.querySelector('.js-ping');
 
-	let audioController = new AudioController(audioContext, btn);
+	audioController = new AudioController(audioContext, btn);
 
 	function emitButtonDown() {
 		console.warn("%cSTART Emitting", outgoingStyle);
@@ -30,10 +32,12 @@ function init() {
 		socket.emit('emitterStop');
 	}
 
+	// ACTIVATE
 	['touchstart', 'mousedown'].forEach(function(eventType) {
 		btn.addEventListener(eventType, emitButtonDown);
 	});
 
+	// DEACTIVATE
 	['touchend', 'mouseup'].forEach(function(eventType) {
 		btn.addEventListener(eventType, emitButtonUp);
 	});
@@ -67,9 +71,13 @@ socket.on('signalStop', function(e) {
 });
 
 socket.on('signalStartBroadcast', function(e) {
-	intervalIdBroadcast = setInterval(function() {
+	var handleIncoming = function() {
 		console.info("%cINCOMING Broadcast", broadcastStyle);
-	}, 1000);
+		audioController.ping("C4");
+	};
+
+	intervalIdBroadcast = setInterval(handleIncoming, 1000);
+	handleIncoming();
 });
 
 socket.on('signalStopBroadcast', function(e) {
