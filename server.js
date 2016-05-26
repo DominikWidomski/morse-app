@@ -86,7 +86,7 @@ io.on('connection', function(socket) {
     //Tell all those in the room that a new user joined
     io.in(MORSE_GROUP).emit('newUserView', user);
 
-    io.in(ADMIN_GROUP).emit('newUserView', user);
+    adminIo.in(ADMIN_GROUP).emit('newUserView', user);
 
     console.log('JOINED', user.username);
   });
@@ -110,9 +110,9 @@ io.on('connection', function(socket) {
 
 
 /* ADMIN NAMESPACE */
-let adminIO = io.of('/admin');
+let adminIo = io.of('/admin');
 
-adminIO.on('connection', function(socket) {
+adminIo.on('connection', function(socket) {
   let thisUser = null;
 
   //Emit the rooms array
@@ -133,7 +133,7 @@ adminIO.on('connection', function(socket) {
     adminUsers[socket.id] = user;
 
     //Tell all those in the room that a new user joined
-    io.in(ADMIN_GROUP).emit('newAdminView', user);
+    adminIo.in(ADMIN_GROUP).emit('newAdminView', user);
 
     // Tell admin view who is using the application
     socket.emit('usersInfo', {
