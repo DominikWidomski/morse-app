@@ -9,16 +9,15 @@
 		<link rel="stylesheet" href=/bower_components/bootstrap/dist/css/bootstrap.css></link>
 		<link rel="stylesheet" href="client.css">
 	</head>
-	<body>
-		<div class="container">
-			<h1>IRL</h1>
+	<body ng-app="userModule">
+		<div ng-controller="notesController">
+			<div class="container">
+				<h1 class="text-center">IRL</h1>
 
-			<button type="button" class="js-ping fab"></button>
-		</div>
+				<button type="button" class="js-ping fab">{{selectedNote}}</button>
+			</div>
 
-		<div class="settings" ng-app="userModule">
-			<div ng-controller="notesController">
-
+			<div class="settings">
 				<button 	type="button"
 							class="btn btn-link"
 							data-toggle="collapse"
@@ -26,6 +25,7 @@
 
 					<!-- <span class="glyphicon glyphicon-wrench"></span> -->
 					<span class="glyphicon glyphicon-music"></span>
+					<b>[{{selectedNote}}]</b>
 				</button>
 
 				<span class="pull-right">
@@ -34,7 +34,6 @@
 						<span class="glyphicon glyphicon-volume-up" ng-show="volume"></span>
 					</button>
 				</span>
-
 
 				<div id="notesSelect" class="collapse settings__body">
 					<button 	type="button"
