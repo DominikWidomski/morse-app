@@ -73,7 +73,9 @@ socket.on('signalStop', function(e) {
 socket.on('signalStartBroadcast', function(e) {
 	var handleIncoming = function() {
 		console.info("%cINCOMING Broadcast", broadcastStyle);
-		audioController.ping(selectedNote);
+		if(volume) {
+			audioController.ping(selectedNote);
+		}
 	};
 
 	intervalIdBroadcast = setInterval(handleIncoming, 1000);
@@ -87,10 +89,13 @@ socket.on('signalStopBroadcast', function(e) {
 
 // NOTES SELECTOR
 let selectedNote = "C4";
+let volume = true;
 
 angular.module('userModule', [])
 	.controller('notesController', function($scope) {
 		$scope.selectedNote = selectedNote;
+
+		$scope.volume = volume;
 
 		$scope.notes = {
 			"C4" : 261.63,
@@ -115,5 +120,9 @@ angular.module('userModule', [])
 
 		$scope.selectNote = function(note) {
 			$scope.selectedNote = selectedNote = note;
+		}
+
+		$scope.toggleVolume = function() {
+			$scope.volume = volume = !$scope.volume;
 		}
 	});

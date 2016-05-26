@@ -17,19 +17,35 @@
 		</div>
 
 		<div class="settings" ng-app="userModule">
-			<button type="button" class="btn btn-link">
-				<span class="glyphicon glyphicon-wrench"></span>
-			</button>
+			<div ng-controller="notesController">
 
-			<div class="settings__body" ng-controller="notesController">
 				<button 	type="button"
-							class="js-select-note btn btn-link"
-							value="{{note}}"
-							ng-repeat="(note, freq) in notes"
-							ng-click="selectNote(note)"
-							ng-class="{true:'btn-primary', false: 'btn-link'}[note==selectedNote]">
-							{{note}}
+							class="btn btn-link"
+							data-toggle="collapse"
+							data-target="#notesSelect">
+
+					<!-- <span class="glyphicon glyphicon-wrench"></span> -->
+					<span class="glyphicon glyphicon-music"></span>
 				</button>
+
+				<span class="pull-right">
+					<button type="button" class="btn btn-link" ng-click="toggleVolume()">
+						<span class="glyphicon glyphicon-volume-off" ng-hide="volume"></span>
+						<span class="glyphicon glyphicon-volume-up" ng-show="volume"></span>
+					</button>
+				</span>
+
+
+				<div id="notesSelect" class="collapse settings__body">
+					<button 	type="button"
+								class="js-select-note btn btn-link"
+								value="{{note}}"
+								ng-repeat="(note, freq) in notes"
+								ng-click="selectNote(note)"
+								ng-class="{true:'btn-primary', false: 'btn-link'}[note==selectedNote]">
+								{{note}}
+					</button>
+				</div>
 			</div>
 		</div>
 
