@@ -25,7 +25,7 @@
 
 					<div ng-controller="UsersController">
 						<ul class="list-unstyled">
-							<li ng-repeat="user in users">{{user.username}}</li>
+							<li ng-repeat="(userSocketId, user) in users">{{user.username}}</li>
 							<li class="text-muted" ng-show="!users.length">No user views</li>
 						</ul>
 					</div>
@@ -36,7 +36,7 @@
 
 					<div ng-controller="AdminController">
 						<ul class="list-unstyled">
-							<li ng-repeat="user in users">{{user.username}}</li>
+							<li ng-repeat="(userSocketId, user) in users">{{user.username}}</li>
 							<li class="text-muted" ng-show="!users.length">No admin views</li>
 						</ul>
 					</div>

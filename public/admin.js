@@ -1,63 +1,37 @@
 const socket = io('/admin');
-socket.on('setup', function() {
-	console.log(arguments);
-});
-
-socket.emit('registerAdminView', {
-	username: 'Dom Admin'
-});
-
-socket.on('usersInfo', data => {
-	console.log("USERS", data);
-});
-
 
 angular.module('adminApp', [])
 	.controller('UsersController', function($scope) {
-		window.$scope = $scope;
+		window.usersScope = $scope;
 
 		$scope.users = [];
 
-		$scope.addNewUser = function() {
-			$scope.users.push({
-				username: $scope.newUserName
-			});
-
-			$scope.newUserName = "";
-		}
-
-		socket.on('usersInfo', data => {
-			console.log("USERS", data);
-			for(userId in data.users) {
-				$scope.users.push({
-					username: data.users[userId].username
-				});
-			}
+		socket.on('setup', (usersData) => {
+			console.log("USER CNTRL", usersData);
+			$scope.users = usersData.users;
 			$scope.$apply();
 		});
 
-		socket.on('newUserView', data => {
-			console.log("NEW USER VIEW", data);
-			$scope.users.push(data);
+		socket.on('newUserView', user => {
+			console.log("NEW USER VIEW", user);
+			$scope.users[user.id] = user;
 			$scope.$apply();
 		});
 	})
+
 	.controller('AdminController', function($scope) {
-		window.$scope = $scope;
+		window.adminScope = $scope;
 
 		$scope.users = [];
 
-		socket.on('usersInfo', data => {
-			for(userId in data.adminUsers) {
-				$scope.users.push({
-					username: data.adminUsers[userId].username
-				});
-			}
+		socket.on('setup', (usersData) => {
+			console.log("ADMIN CNTRL");
+			$scope.users = usersData.adminUsers;
 			$scope.$apply();
 		});
 
-		socket.on('newAdminView', data => {
-			$scope.users.push(data);
+		socket.on('newAdminView', user => {
+			$scope.users[user.id] = user;
 			$scope.$apply();
 		});
 	});

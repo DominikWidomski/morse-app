@@ -76,7 +76,7 @@ io.on('connection', function(socket) {
 
   adminIo.in(ADMIN_GROUP).emit('newUserView', thisUser);
 
-  console.log('JOINED', thisUser);
+  console.log('USER JOINED', thisUser);
   /* INITIAL SETUP */
 
   //Emit the rooms array
@@ -85,28 +85,23 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     delete users[socket.id];
     io.in(USER_GROUP).emit('userLeft', socket.id);
-    console.log('LEFT', socket.id, thisUser ? thisUser.username : "NOT SPECIFIED");
+
+    adminIo.emit('userLeft', socket.id);
+
+    console.log('LEFT', socket.id, thisUser.username ? thisUser.username : "NOT SPECIFIED");
   });
 
   socket.on('emitterStart', function(data) {
-    // console.log(">>> Start Emitting");
-
-    io.emit('signalStart');
     socket.broadcast.emit('signalStartBroadcast', {
       userSocketId: socket.id,
       note: data.note
     });
-    // console.log("<<< START [GLOBAL]");
   });
 
   socket.on('emitterStop', function(data) {
-    // console.log(">>> Stop Emitting");
-
-    io.emit('signalStop');
     socket.broadcast.emit('signalStopBroadcast', {
       userSocketId: socket.id
     });
-    // console.log("<<< STOP [GLOBAL]");
   });
 });
 
@@ -115,39 +110,37 @@ io.on('connection', function(socket) {
 let adminIo = io.of('/admin');
 
 adminIo.on('connection', function(socket) {
-  let thisUser = null;
+  let thisUser = {
+    id: socket.id,
+    username: 'default admin'
+  };
+
+  /* INITIAL SETUP */
+  // Register an admin view, for viewing stats
+  socket.join(ADMIN_GROUP);
+
+  adminUsers[socket.id] = thisUser;
+
+  //Tell all those in the room that a new user joined
+  adminIo.in(ADMIN_GROUP).emit('newAdminView', thisUser);
 
   //Emit the rooms array
   socket.emit('setup', {
-    rooms: rooms
+    adminUsers: adminUsers,
+    users: users
   });
+
+  console.log("ADMIN USER JOINED", thisUser.id);
+  /* INITIAL SETUP */
 
   socket.on('disconnect', function() {
     delete adminUsers[socket.id];
+
     console.log('LEFT', socket.id, thisUser ? thisUser.username : "NOT SPECIFIED");
   });
 
   socket.on('changeName', function(name) {
     thisUser.username = name;
-
-
-  });
-
-  // Register an admin view, for viewing stats
-  socket.on('registerAdminView', function(user) {
-    //New user joins the default room
-    socket.join(ADMIN_GROUP);
-
-    adminUsers[socket.id] = user;
-
-    //Tell all those in the room that a new user joined
-    adminIo.in(ADMIN_GROUP).emit('newAdminView', user);
-
-    // Tell admin view who is using the application
-    socket.emit('usersInfo', {
-      adminUsers: adminUsers,
-      users: users
-    });
   });
 });
 /*||||||||||||||||||||END SOCKETS||||||||||||||||||*/
