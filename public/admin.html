@@ -8,40 +8,38 @@
 		<link rel="stylesheet" href=/bower_components/bootstrap/dist/css/bootstrap.css></link>
 	</head>
 	<body>
-		<h1>Admin</h1>
+		<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+			<div class="container">
+				<div class="navbar-header">
+					<h1 class="navbar-brand">4Real Admin</h1>
+				</div>
+			</div>
+		</nav>
 
-		<!--
-		<form action="/setup" method="post" accept-charset="utf-8">
-			<fieldset disabled>
-				<p>MongoDB disabled</p>
-				<p>Setup the DB</p>
+		<div class="container">
 
-				<button type="submit">Setup</button>
-			</fieldset>
-		</form>
-		-->
+			<div class="row" ng-app="adminApp">
+				<div class="col-md-6">
+					<h2>Users:</h2>
 
-		<div ng-app="adminApp">
-			<h2>Users:</h2>
+					<div ng-controller="UsersController">
+						<ul class="list-unstyled">
+							<li ng-repeat="user in users">{{user.username}}</li>
+						</ul>
+					</div>
+				</div>
 
-			<div ng-controller="UsersController">
-				<ul>
-					<li ng-repeat="user in users">{{user.username}}</li>
-				</ul>
+				<div class="col-md-6">
+					<h2>Admins:</h2>
 
-				<!--
-				<input type="text" ng-model="newUserName">
-				<button type="button" ng-click="addNewUser()">Add User</button>
-				-->
+					<div ng-controller="AdminController">
+						<ul class="list-unstyled">
+							<li ng-repeat="user in users">{{user.username}}</li>
+						</ul>
+					</div>
+				</div>
 			</div>
 
-			<h2>Admins:</h2>
-
-			<div ng-controller="AdminController">
-				<ul>
-					<li ng-repeat="user in users">{{user.username}}</li>
-				</ul>
-			</div>
 		</div>
 
 
