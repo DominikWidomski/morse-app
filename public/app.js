@@ -14,6 +14,8 @@ function getAudioContext() {
 }
 
 let audioController;
+let selectedNote = "C4";
+let volume = true;
 
 function init() {
 	audioContext = getAudioContext();
@@ -24,7 +26,9 @@ function init() {
 
 	function emitButtonDown() {
 		console.warn("%cSTART Emitting", outgoingStyle);
-		socket.emit('emitterStart');
+		socket.emit('emitterStart', {
+			note: selectedNote
+		});
 	}
 
 	function emitButtonUp() {
@@ -43,13 +47,40 @@ function init() {
 	});
 }
 
+var users = {};
+
 const socket = io();
-socket.on('setup', function() {
-	console.log(arguments);
+socket.on('setup', function(srvr_users) {
+	console.log("RECEIVED SETUP PAYLOAD");
+	console.log(srvr_users);
+
+	// Reset Users
+	users = srvr_users;
+
+	for(userSocketId in users) {
+		users[userSocketId].audio = new AudioController(audioContext);
+	}
+
+	// for(let i = 0; i < srvr_users.length; ++i) {
+	// 	var user = srvr_users[i];
+	// 	console.log(user);
+	// 	users[user.id] = user;
+	// }
 });
 
 socket.emit('registerUserView', {
 	username: 'Dom Client'
+});
+
+socket.on('userJoined', function(user) {
+	console.log("NEW USER JOINED");
+	users[user.id] = user;
+
+	users[user.id].audio = new AudioController(audioContext);
+});
+
+socket.on('userLeft', function(userSocketId) {
+	delete users[userSocketId];
 });
 
 let incomingStyle = 'color: red';
@@ -70,7 +101,7 @@ socket.on('signalStop', function(e) {
 	clearTimeout(intervalId);
 });
 
-socket.on('signalStartBroadcast', function(e) {
+socket.on('signalStartBroadcast', function(data) {
 	/*
 	var handleIncoming = function() {
 		console.info("%cINCOMING Broadcast", broadcastStyle);
@@ -82,19 +113,24 @@ socket.on('signalStartBroadcast', function(e) {
 	intervalIdBroadcast = setInterval(handleIncoming, 1000);
 	handleIncoming();
 	*/
-	audioController.start(selectedNote);
+	if(volume) {
+		console.log("START", data);
+		let audio = users[data.userSocketId].audio;
+		audio.start(data.note);
+	} else {
+		console.info("Volume Down!");
+	}
 });
 
-socket.on('signalStopBroadcast', function(e) {
-	console.info("%cINCOMING Broadcast Stopped!!!", broadcastStyle);
+socket.on('signalStopBroadcast', function(data) {
+	// console.info("%cINCOMING Broadcast Stopped!!!", broadcastStyle);
+	console.log("STOP", data);
 	clearTimeout(intervalIdBroadcast);
-	audioController.stop();
+	let audio = users[data.userSocketId].audio;
+	audio.stop();
 });
 
 // NOTES SELECTOR
-let selectedNote = "C4";
-let volume = true;
-
 angular.module('userModule', [])
 	.controller('notesController', function($scope) {
 		$scope.selectedNote = selectedNote;

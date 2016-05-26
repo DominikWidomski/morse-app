@@ -47,8 +47,8 @@ app.get('/admin', function(req, res) {
 
 
 /*|||||||||||||||| GLOBAL VARS ||||||||||||||||*/
-const MORSE_GROUP = 'morse';
-const ADMIN_GROUP = 'admin';
+const USER_GROUP = 'users';
+const ADMIN_GROUP = 'admins';
 
 let users = {};
 let adminUsers = {};
@@ -59,52 +59,54 @@ let adminUsers = {};
 
 /* DEFAULT NAMESPACE */
 io.on('connection', function(socket) {
-  let thisUser = null;
   let thisUserUuid = null;
+  let thisUser = {
+    id: socket.id,
+    username: 'default'
+  };
+
+  /* INITIAL SETUP */
+  // New user joins the default room
+  socket.join(USER_GROUP);
+
+  users[socket.id] = thisUser;
+
+  //Tell all those in the room that a new user joined
+  io.in(USER_GROUP).emit('userJoined', thisUser);
+
+  adminIo.in(ADMIN_GROUP).emit('newUserView', thisUser);
+
+  console.log('JOINED', thisUser);
+  /* INITIAL SETUP */
 
   //Emit the rooms array
-  socket.emit('setup', {
-    users: users
-  });
+  socket.emit('setup', users);
 
   socket.on('disconnect', function() {
-    console.log('LEFT', thisUser ? thisUser.username : "NOT SPECIFIED");
-  });
-
-  // Registe User View, for sending signals
-  socket.on('registerUserView', function(user) {
-    //New user joins the default room
-    socket.join(MORSE_GROUP);
-
-    while(!users[(thisUserUuid = uuid())]) {
-      users[thisUserUuid] = user;
-      break;
-    }
-
-    thisUser = user;
-
-    //Tell all those in the room that a new user joined
-    io.in(MORSE_GROUP).emit('newUserView', user);
-
-    adminIo.in(ADMIN_GROUP).emit('newUserView', user);
-
-    console.log('JOINED', user);
+    delete users[socket.id];
+    io.in(USER_GROUP).emit('userLeft', socket.id);
+    console.log('LEFT', socket.id, thisUser ? thisUser.username : "NOT SPECIFIED");
   });
 
   socket.on('emitterStart', function(data) {
-    console.log(">>> Start Emitting");
+    // console.log(">>> Start Emitting");
 
     io.emit('signalStart');
-    socket.broadcast.emit('signalStartBroadcast');
-    console.log("<<< START [GLOBAL]");
+    socket.broadcast.emit('signalStartBroadcast', {
+      userSocketId: socket.id,
+      note: data.note
+    });
+    // console.log("<<< START [GLOBAL]");
   });
 
   socket.on('emitterStop', function(data) {
-    console.log(">>> Stop Emitting");
+    // console.log(">>> Stop Emitting");
 
     io.emit('signalStop');
-    socket.broadcast.emit('signalStopBroadcast');
-    console.log("<<< STOP [GLOBAL]");
+    socket.broadcast.emit('signalStopBroadcast', {
+      userSocketId: socket.id
+    });
+    // console.log("<<< STOP [GLOBAL]");
   });
 });
 
@@ -117,12 +119,18 @@ adminIo.on('connection', function(socket) {
 
   //Emit the rooms array
   socket.emit('setup', {
-    // rooms: rooms
+    rooms: rooms
   });
 
   socket.on('disconnect', function() {
     delete adminUsers[socket.id];
-    console.log('LEFT', thisUser ? thisUser.username : "NOT SPECIFIED");
+    console.log('LEFT', socket.id, thisUser ? thisUser.username : "NOT SPECIFIED");
+  });
+
+  socket.on('changeName', function(name) {
+    thisUser.username = name;
+
+
   });
 
   // Register an admin view, for viewing stats
@@ -144,7 +152,7 @@ adminIo.on('connection', function(socket) {
 });
 /*||||||||||||||||||||END SOCKETS||||||||||||||||||*/
 
-console.log(process.argv);
+// console.log(process.argv);
 
 /* Start Server on port 1337 */
 server.listen(1337, "0.0.0.0");
