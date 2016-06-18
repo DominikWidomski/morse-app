@@ -60,16 +60,10 @@ socket.on('setup', function(srvr_users) {
 	for(userSocketId in users) {
 		users[userSocketId].audio = new AudioController(audioContext);
 	}
-
-	// for(let i = 0; i < srvr_users.length; ++i) {
-	// 	var user = srvr_users[i];
-	// 	console.log(user);
-	// 	users[user.id] = user;
-	// }
 });
 
 socket.emit('registerUserView', {
-	username: 'Dom Client'
+	username: window.localStorage.getItem('username')
 });
 
 socket.on('userJoined', function(user) {
@@ -102,17 +96,6 @@ socket.on('signalStop', function(e) {
 });
 
 socket.on('signalStartBroadcast', function(data) {
-	/*
-	var handleIncoming = function() {
-		console.info("%cINCOMING Broadcast", broadcastStyle);
-		if(volume) {
-			audioController.ping(selectedNote);
-		}
-	};
-
-	intervalIdBroadcast = setInterval(handleIncoming, 1000);
-	handleIncoming();
-	*/
 	if(volume) {
 		console.log("START", data);
 		let audio = users[data.userSocketId].audio;
@@ -132,10 +115,13 @@ socket.on('signalStopBroadcast', function(data) {
 
 // NOTES SELECTOR
 angular.module('userModule', [])
-	.controller('notesController', function($scope) {
+	.controller('notesController', function() {
+		console.log(arguments);
 		$scope.selectedNote = selectedNote;
 
 		$scope.volume = volume;
+
+		$scope.username = window.localStorage.getItem('username') || 'default';
 
 		$scope.notes = {
 			"C4" : 261.63,
@@ -164,5 +150,11 @@ angular.module('userModule', [])
 
 		$scope.toggleVolume = function() {
 			$scope.volume = volume = !$scope.volume;
+		}
+
+		$scope.submitUsername = function() {
+			const username = $scope.username;
+			socket.emit('submitUsername', username);
+			window.localStorage.setItem('username', username);
 		}
 	});

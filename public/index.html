@@ -44,6 +44,14 @@
 								ng-class="{true:'btn-primary', false: 'btn-link'}[note==selectedNote]">
 								{{note}}
 					</button>
+
+					<div class="form-group">
+						<input 	type="text"
+									class="form-control"
+									placeholder="username"
+									ng-model="username"
+									ng-change="submitUsername()">
+					</div>
 				</div>
 			</div>
 		</div>
