@@ -82,6 +82,10 @@ io.on('connection', function(socket) {
   //Emit the rooms array
   socket.emit('setup', users);
 
+  socket.on('registerUserView', function(user) {
+    users[socket.id].username = user.username;
+  });
+
   socket.on('disconnect', function() {
     delete users[socket.id];
     io.in(USER_GROUP).emit('userLeft', socket.id);
@@ -102,6 +106,10 @@ io.on('connection', function(socket) {
     socket.broadcast.emit('signalStopBroadcast', {
       userSocketId: socket.id
     });
+  });
+
+  socket.on('submitUsername', function(username) {
+    users[socket.id].username = username;
   });
 });
 
